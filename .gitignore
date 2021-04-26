@@ -33,6 +33,7 @@ yarn-error.log*
 
 src/generated*
 graphql.schema.json
+schema.graphql
 
 # IDEs and editors
 /.idea
