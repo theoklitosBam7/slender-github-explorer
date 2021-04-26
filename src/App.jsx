@@ -3,6 +3,7 @@ import { ApolloProvider } from '@apollo/client';
 import { Typography, Container, makeStyles } from '@material-ui/core';
 
 import client from './apollo-client';
+import AuthForm from './AuthForm';
 
 const useStyles = makeStyles({
   title: {
@@ -21,6 +22,7 @@ const App = () => {
         <Typography variant={'h3'} className={classes.title}>
           Hello to slender github explorer
         </Typography>
+        <AuthForm />
       </Container>
     </ApolloProvider>
   );
