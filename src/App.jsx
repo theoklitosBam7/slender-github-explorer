@@ -1,21 +1,29 @@
-function App() {
+import React from 'react';
+import { ApolloProvider } from '@apollo/client';
+import { Typography, Container, makeStyles } from '@material-ui/core';
+
+import client from './apollo-client';
+
+const useStyles = makeStyles({
+  title: {
+    marginTop: '1rem',
+    marginBottom: '1rem',
+    textAlign: 'center',
+  },
+});
+
+const App = () => {
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <Container maxWidth={'sm'}>
+        <Typography variant={'h3'} className={classes.title}>
+          Hello to slender github explorer
+        </Typography>
+      </Container>
+    </ApolloProvider>
   );
-}
+};
 
 export default App;
