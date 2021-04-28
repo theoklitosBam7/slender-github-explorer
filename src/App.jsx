@@ -5,6 +5,7 @@ import { Typography, Container, makeStyles } from '@material-ui/core';
 import client from './apollo-client';
 import AuthForm from './AuthForm';
 import SearchForm from './SearchForm';
+import Repository from './Repository';
 
 const useStyles = makeStyles({
   title: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles({
 const App = () => {
   const classes = useStyles();
   const [repoName, setRepoName] = useState('');
+  const token = localStorage.getItem('Authorization');
 
   return (
     <ApolloProvider client={client}>
@@ -26,6 +28,7 @@ const App = () => {
         </Typography>
         <AuthForm />
         <SearchForm onSubmit={setRepoName} />
+        {token && <Repository repoName={repoName} />}
       </Container>
     </ApolloProvider>
   );

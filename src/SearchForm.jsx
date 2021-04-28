@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { TextField, InputAdornment, makeStyles } from '@material-ui/core';
+import {
+  TextField,
+  InputAdornment,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles({
@@ -7,23 +12,33 @@ const useStyles = makeStyles({
     width: '100%',
     marginBottom: '1rem',
   },
+  note: {
+    marginTop: '1rem',
+    textAlign: 'center',
+  },
 });
 
 const SearchForm = ({ onSubmit }) => {
   const classes = useStyles();
-
+  const token = localStorage.getItem('Authorization');
   const [repoName, setRepoName] = useState('');
-  const [error, setError] = useState(false);
+  const [errorInput, setErrorInput] = useState(false);
+  const [errorToken, setErrorToken] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (repoName.indexOf('/') > -1) {
-      localStorage.setItem('Repo', repoName);
-      onSubmit(repoName);
-      setRepoName('');
-      setError(false);
+    if (!token) {
+      setErrorToken(true);
     } else {
-      setError(true);
+      setErrorToken(false);
+      if (repoName.indexOf('/') > -1) {
+        localStorage.setItem('Repo', repoName);
+        onSubmit(repoName);
+        setRepoName('');
+        setErrorInput(false);
+      } else {
+        setErrorInput(true);
+      }
     }
   };
 
@@ -37,10 +52,10 @@ const SearchForm = ({ onSubmit }) => {
     >
       <TextField
         className={classes.input}
-        error={error}
-        label={error ? 'Error' : 'Search for repo: e.g. facebook/react'}
-        helperText={error ? 'Incorrect entry' : ''}
-        id={error ? 'outlined-error-helper-text' : ''}
+        error={errorInput}
+        label={errorInput ? 'Error' : 'Search for repo: e.g. facebook/react'}
+        helperText={errorInput ? 'Incorrect entry' : ''}
+        id={errorInput ? 'outlined-error-helper-text' : ''}
         variant={'outlined'}
         InputProps={{
           endAdornment: (
@@ -52,6 +67,16 @@ const SearchForm = ({ onSubmit }) => {
         value={repoName}
         onChange={(e) => setRepoName(e.target.value)}
       />
+      {errorToken && (
+        <Typography
+          variant={'overline'}
+          className={classes.note}
+          component={'div'}
+          color={'error'}
+        >
+          Token required
+        </Typography>
+      )}
     </form>
   );
 };
