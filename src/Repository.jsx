@@ -37,8 +37,8 @@ const Repository = ({ repoName }) => {
   const [owner = '', name = ''] = repo ? repo.split('/') : repoName.split('/');
   const { loading, error, data } = useQuery(GET_BASIC_REPO_INFO, {
     variables: {
-      name: name,
-      owner: owner,
+      name,
+      owner,
     },
   });
 
@@ -60,7 +60,20 @@ const Repository = ({ repoName }) => {
         component={'div'}
         color={'error'}
       >
-        {message}
+        Error: {message}
+      </Typography>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Typography
+        variant={'overline'}
+        className={classes.note}
+        component={'div'}
+        color={'primary'}
+      >
+        There is no such repository!
       </Typography>
     );
   }

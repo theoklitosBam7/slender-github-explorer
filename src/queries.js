@@ -19,14 +19,21 @@ export const GET_ISSUES_INFO = gql`
   query getIssuesInfo(
     $name: String!
     $owner: String!
-    $issStates: [IssueState!]!
+    $first: Int!
+    $after: String
+    $states: [IssueState!]!
   ) {
     repository(name: $name, owner: $owner) {
       issues(
-        first: 20
-        states: $issStates
+        first: $first
+        after: $after
+        states: $states
         orderBy: { field: CREATED_AT, direction: DESC }
       ) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
         edges {
           node {
             number

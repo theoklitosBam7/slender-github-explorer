@@ -20,7 +20,7 @@ const RepoIssues = ({ repoName }) => {
   return (
     <>
       <FilterIssues filterState={filterState} />
-      <Issues repoName={repoName} issuesState={state} />
+      <Issues repoName={repoName} states={state} />
     </>
   );
 };

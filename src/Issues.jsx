@@ -1,15 +1,20 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import {
+  Button,
+  Chip,
+  CircularProgress,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GET_ISSUES_INFO } from './queries';
-import { CircularProgress, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({
   root: {
@@ -23,17 +28,24 @@ const useStyles = makeStyles({
     justifyContent: 'space-around',
     marginTop: '1rem',
   },
+  chip: {
+    marginTop: '1rem',
+    marginLeft: '1rem',
+  },
 });
 
-const Issues = ({ repoName, issuesState }) => {
+const Issues = ({ repoName, states }) => {
   const classes = useStyles();
+  const first = 20;
   const repo = localStorage.getItem('Repo');
   const [owner = '', name = ''] = repo ? repo.split('/') : repoName.split('/');
-  const { loading, error, data } = useQuery(GET_ISSUES_INFO, {
+  const { loading, error, data, fetchMore } = useQuery(GET_ISSUES_INFO, {
     variables: {
-      name: name,
-      owner: owner,
-      issStates: issuesState,
+      name,
+      owner,
+      first,
+      after: null,
+      states,
     },
   });
 
@@ -55,23 +67,25 @@ const Issues = ({ repoName, issuesState }) => {
         component={'div'}
         color={'error'}
       >
-        {message}
+        Error: {message}
       </Typography>
     );
   }
 
-  if (!data) {
-    return (
-      <Typography
-        variant={'overline'}
-        className={classes.note}
-        component={'div'}
-        color={'primary'}
-      >
-        There is no such repository!
-      </Typography>
-    );
-  }
+  const { endCursor, hasNextPage } = data.repository.issues.pageInfo;
+
+  const loadMore = () => {
+    fetchMore({
+      variables: { name, owner, first, states, after: endCursor },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.repository.issues.edges = [
+          ...prevResult.repository.issues.edges,
+          ...fetchMoreResult.repository.issues.edges,
+        ];
+        return fetchMoreResult;
+      },
+    });
+  };
 
   return (
     <>
@@ -103,6 +117,22 @@ const Issues = ({ repoName, issuesState }) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Button
+        className={classes.root}
+        variant="contained"
+        color="primary"
+        disabled={!hasNextPage}
+        onClick={() => loadMore()}
+      >
+        Load More
+      </Button>
+
+      <Chip
+        className={classes.chip}
+        label={`Loaded: ${data.repository.issues.edges.length}`}
+        variant="outlined"
+      />
     </>
   );
 };
