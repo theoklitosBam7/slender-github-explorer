@@ -88,8 +88,8 @@ const Forks = ({ repoName }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.repository.forks.edges.map(({ node }, idx) => (
-              <TableRow key={idx}>
+            {data.repository.forks.edges.map(({ node }) => (
+              <TableRow key={node.id}>
                 <TableCell align="center">
                   {node.owner.login.concat('/', node.name)}
                 </TableCell>

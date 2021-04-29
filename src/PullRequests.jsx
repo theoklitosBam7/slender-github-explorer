@@ -89,8 +89,8 @@ const PullRequests = ({ repoName }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.repository.pullRequests.edges.map(({ node }, idx) => (
-              <TableRow key={idx}>
+            {data.repository.pullRequests.edges.map(({ node }) => (
+              <TableRow key={node.id}>
                 <TableCell align="center">{node.title}</TableCell>
                 <TableCell align="center">{node.author.login}</TableCell>
                 <TableCell align="center">{node.comments.totalCount}</TableCell>

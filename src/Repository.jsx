@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Chip,
   CircularProgress,
   makeStyles,
   Paper,
@@ -7,6 +8,7 @@ import {
   Tabs,
   Typography,
 } from '@material-ui/core';
+import StarIcon from '@material-ui/icons/Star';
 import { useQuery } from '@apollo/client';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
@@ -28,6 +30,12 @@ const useStyles = makeStyles({
   spinnerContainer: {
     display: 'flex',
     justifyContent: 'space-around',
+    marginTop: '1rem',
+  },
+  chip: {
+    marginLeft: '1rem',
+  },
+  mt1: {
     marginTop: '1rem',
   },
 });
@@ -80,13 +88,29 @@ const Repository = ({ repoName }) => {
     );
   }
 
+  const {
+    viewerHasStarred,
+    stargazers: { totalCount },
+  } = data.repository;
   const routes = ['/issues', '/pull-requests', '/forks'];
   return (
     <>
       <Typography variant={'h5'} component={'div'}>
         {repo ? repo : repoName}
+        <Chip
+          label={
+            viewerHasStarred ? `Unstar | ${totalCount}` : `Star | ${totalCount}`
+          }
+          avatar={<StarIcon />}
+          className={classes.chip}
+          onClick={(e) => console.log(e)}
+        />
       </Typography>
-      <Typography variant={'subtitle1'} component={'div'}>
+      <Typography
+        className={classes.mt1}
+        variant={'subtitle1'}
+        component={'div'}
+      >
         {data.repository.description}
       </Typography>
 

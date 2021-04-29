@@ -109,7 +109,7 @@ const Issues = ({ repoName, states }) => {
           </TableHead>
           <TableBody>
             {data.repository.issues.edges.map(({ node }) => (
-              <TableRow key={node.number}>
+              <TableRow key={node.id}>
                 <TableCell align="center"> #{node.number}</TableCell>
                 <TableCell align="center">{node.title}</TableCell>
                 <TableCell align="center">{node.author.login}</TableCell>

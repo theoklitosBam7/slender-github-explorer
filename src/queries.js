@@ -3,7 +3,12 @@ import { gql } from '@apollo/client';
 export const GET_BASIC_REPO_INFO = gql`
   query getBasicRepoInfo($name: String!, $owner: String!) {
     repository(name: $name, owner: $owner) {
+      id
       description
+      viewerHasStarred
+      stargazers {
+        totalCount
+      }
       forkCount
       issues(states: [OPEN]) {
         totalCount
@@ -24,6 +29,7 @@ export const GET_ISSUES_INFO = gql`
     $states: [IssueState!]!
   ) {
     repository(name: $name, owner: $owner) {
+      id
       issues(
         first: $first
         after: $after
@@ -36,6 +42,7 @@ export const GET_ISSUES_INFO = gql`
         }
         edges {
           node {
+            id
             number
             title
             author {
@@ -56,6 +63,7 @@ export const GET_ISSUES_INFO = gql`
 export const GET_PULL_REQUESTS_INFO = gql`
   query getPullRequestsInfo($name: String!, $owner: String!, $first: Int!) {
     repository(name: $name, owner: $owner) {
+      id
       pullRequests(
         first: $first
         states: [OPEN]
@@ -63,6 +71,7 @@ export const GET_PULL_REQUESTS_INFO = gql`
       ) {
         edges {
           node {
+            id
             title
             author {
               login
@@ -82,9 +91,11 @@ export const GET_PULL_REQUESTS_INFO = gql`
 export const GET_FORKS_INFO = gql`
   query getForksInfo($name: String!, $owner: String!, $first: Int!) {
     repository(name: $name, owner: $owner) {
+      id
       forks(first: $first, orderBy: { field: CREATED_AT, direction: DESC }) {
         edges {
           node {
+            id
             ... on Repository {
               name
               owner {
