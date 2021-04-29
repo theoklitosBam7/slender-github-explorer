@@ -113,3 +113,27 @@ export const GET_FORKS_INFO = gql`
     }
   }
 `;
+
+export const STAR_REPO = gql`
+  mutation starRepo($repoId: ID!) {
+    addStar(input: { starrableId: $repoId }) {
+      starrable {
+        stargazers {
+          totalCount
+        }
+      }
+    }
+  }
+`;
+
+export const UNSTAR_REPO = gql`
+  mutation UnStarRepo($repoId: ID!) {
+    removeStar(input: { starrableId: $repoId }) {
+      starrable {
+        stargazers {
+          totalCount
+        }
+      }
+    }
+  }
+`;

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Chip,
   CircularProgress,
   makeStyles,
   Paper,
@@ -8,7 +7,6 @@ import {
   Tabs,
   Typography,
 } from '@material-ui/core';
-import StarIcon from '@material-ui/icons/Star';
 import { useQuery } from '@apollo/client';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
@@ -16,6 +14,7 @@ import { GET_BASIC_REPO_INFO } from './queries';
 import RepoIssues from './RepoIssues';
 import PullRequests from './PullRequests';
 import Forks from './Forks';
+import StarRepo from './StarRepo';
 
 const useStyles = makeStyles({
   root: {
@@ -89,6 +88,7 @@ const Repository = ({ repoName }) => {
   }
 
   const {
+    id,
     viewerHasStarred,
     stargazers: { totalCount },
   } = data.repository;
@@ -97,13 +97,10 @@ const Repository = ({ repoName }) => {
     <>
       <Typography variant={'h5'} component={'div'}>
         {repo ? repo : repoName}
-        <Chip
-          label={
-            viewerHasStarred ? `Unstar | ${totalCount}` : `Star | ${totalCount}`
-          }
-          avatar={<StarIcon />}
-          className={classes.chip}
-          onClick={(e) => console.log(e)}
+        <StarRepo
+          id={id}
+          viewerHasStarred={viewerHasStarred}
+          totalCount={totalCount}
         />
       </Typography>
       <Typography
