@@ -89,6 +89,12 @@ const Issues = ({ repoName, states }) => {
 
   return (
     <>
+      <Chip
+        className={classes.chip}
+        label={`Loaded: ${data.repository.issues.edges.length}`}
+        variant="outlined"
+        color={'primary'}
+      />
       <TableContainer component={Paper} className={classes.root}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
@@ -127,12 +133,6 @@ const Issues = ({ repoName, states }) => {
       >
         Load More
       </Button>
-
-      <Chip
-        className={classes.chip}
-        label={`Loaded: ${data.repository.issues.edges.length}`}
-        variant="outlined"
-      />
     </>
   );
 };

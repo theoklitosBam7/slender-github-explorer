@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+  Chip,
   CircularProgress,
   Paper,
   Table,
@@ -70,6 +71,12 @@ const PullRequests = ({ repoName }) => {
 
   return (
     <>
+      <Chip
+        className={classes.chip}
+        label={`Loaded: ${data.repository.pullRequests.edges.length}`}
+        variant="outlined"
+        color={'primary'}
+      />
       <TableContainer component={Paper} className={classes.root}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
