@@ -13,6 +13,7 @@ import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 import { GET_BASIC_REPO_INFO } from './queries';
 import RepoIssues from './RepoIssues';
 import PullRequests from './PullRequests';
+import Forks from './Forks';
 
 const useStyles = makeStyles({
   root: {
@@ -135,7 +136,10 @@ const Repository = ({ repoName }) => {
             path={routes[1]}
             render={() => <PullRequests repoName={repoName} />}
           />
-          <Route path={routes[2]} />
+          <Route
+            path={routes[2]}
+            render={() => <Forks repoName={repoName} />}
+          />
         </Switch>
       </BrowserRouter>
     </>

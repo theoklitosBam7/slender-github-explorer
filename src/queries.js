@@ -78,3 +78,27 @@ export const GET_PULL_REQUESTS_INFO = gql`
     }
   }
 `;
+
+export const GET_FORKS_INFO = gql`
+  query getForksInfo($name: String!, $owner: String!, $first: Int!) {
+    repository(name: $name, owner: $owner) {
+      forks(first: $first, orderBy: { field: CREATED_AT, direction: DESC }) {
+        edges {
+          node {
+            ... on Repository {
+              name
+              owner {
+                login
+              }
+              stargazers {
+                totalCount
+              }
+              description
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  }
+`;
