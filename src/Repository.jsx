@@ -10,7 +10,8 @@ import {
 import { useQuery } from '@apollo/client';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
-import { GET_REPO_INFO } from './queries';
+import { GET_BASIC_REPO_INFO } from './queries';
+import RepoIssues from './RepoIssues';
 
 const useStyles = makeStyles({
   root: {
@@ -32,9 +33,13 @@ const useStyles = makeStyles({
 const Repository = ({ repoName }) => {
   const classes = useStyles();
   const repo = localStorage.getItem('Repo');
+
   const [owner = '', name = ''] = repo ? repo.split('/') : repoName.split('/');
-  const { loading, error, data } = useQuery(GET_REPO_INFO, {
-    variables: { name: name, owner: owner },
+  const { loading, error, data } = useQuery(GET_BASIC_REPO_INFO, {
+    variables: {
+      name: name,
+      owner: owner,
+    },
   });
 
   if (loading) {
@@ -60,19 +65,6 @@ const Repository = ({ repoName }) => {
     );
   }
 
-  if (!data) {
-    return (
-      <Typography
-        variant={'overline'}
-        className={classes.note}
-        component={'div'}
-        color={'primary'}
-      >
-        There is no such repository!
-      </Typography>
-    );
-  }
-
   const routes = ['/issues', '/pull-requests', '/forks'];
   return (
     <>
@@ -82,43 +74,49 @@ const Repository = ({ repoName }) => {
       <Typography variant={'subtitle1'} component={'div'}>
         {data.repository.description}
       </Typography>
+
       <BrowserRouter>
         <Route
           path="/"
           render={(history) => (
-            <Paper square className={classes.root}>
-              <Tabs
-                value={
-                  history.location.pathname !== '/'
-                    ? history.location.pathname
-                    : false
-                }
-              >
-                <Tab
-                  value={routes[0]}
-                  label={`issues ${data.repository.issues.totalCount}`}
-                  component={Link}
-                  to={routes[0]}
-                />
-                <Tab
-                  value={routes[1]}
-                  label="pull requests"
-                  component={Link}
-                  to={routes[1]}
-                />
-                <Tab
-                  value={routes[2]}
-                  label="forks"
-                  component={Link}
-                  to={routes[2]}
-                />
-              </Tabs>
-            </Paper>
+            <>
+              <Paper square className={classes.root}>
+                <Tabs
+                  value={
+                    history.location.pathname !== '/'
+                      ? history.location.pathname
+                      : false
+                  }
+                >
+                  <Tab
+                    value={routes[0]}
+                    label={`issues (${data.repository.issues.totalCount})`}
+                    component={Link}
+                    to={routes[0]}
+                  />
+                  <Tab
+                    value={routes[1]}
+                    label={`pull requests (${data.repository.pullRequests.totalCount})`}
+                    component={Link}
+                    to={routes[1]}
+                  />
+                  <Tab
+                    value={routes[2]}
+                    label={`forks (${data.repository.forkCount})`}
+                    component={Link}
+                    to={routes[2]}
+                  />
+                </Tabs>
+              </Paper>
+            </>
           )}
         />
 
         <Switch>
-          <Route path={routes[0]} />
+          <Route
+            path={routes[0]}
+            render={() => <RepoIssues repoName={repoName} />}
+          />
           <Route path={routes[1]} />
           <Route path={routes[2]} />
         </Switch>

@@ -22,7 +22,7 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Container maxWidth={'sm'}>
+      <Container maxWidth={'lg'}>
         <Typography variant={'h3'} className={classes.title}>
           Hello to slender github explorer
         </Typography>
