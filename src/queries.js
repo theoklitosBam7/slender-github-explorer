@@ -52,3 +52,29 @@ export const GET_ISSUES_INFO = gql`
     }
   }
 `;
+
+export const GET_PULL_REQUESTS_INFO = gql`
+  query getPullRequestsInfo($name: String!, $owner: String!, $first: Int!) {
+    repository(name: $name, owner: $owner) {
+      pullRequests(
+        first: $first
+        states: [OPEN]
+        orderBy: { field: CREATED_AT, direction: DESC }
+      ) {
+        edges {
+          node {
+            title
+            author {
+              login
+            }
+            comments {
+              totalCount
+            }
+            createdAt
+            state
+          }
+        }
+      }
+    }
+  }
+`;

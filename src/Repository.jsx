@@ -12,6 +12,7 @@ import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 
 import { GET_BASIC_REPO_INFO } from './queries';
 import RepoIssues from './RepoIssues';
+import PullRequests from './PullRequests';
 
 const useStyles = makeStyles({
   root: {
@@ -130,7 +131,10 @@ const Repository = ({ repoName }) => {
             path={routes[0]}
             render={() => <RepoIssues repoName={repoName} />}
           />
-          <Route path={routes[1]} />
+          <Route
+            path={routes[1]}
+            render={() => <PullRequests repoName={repoName} />}
+          />
           <Route path={routes[2]} />
         </Switch>
       </BrowserRouter>
