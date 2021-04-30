@@ -23,14 +23,14 @@ const StarRepo = ({ id, viewerHasStarred, totalCount }) => {
         variables: { repoId: id },
       }).then((res) => {
         setStarCount(res.data.addStar.starrable.stargazers.totalCount);
-        setHasStarred(!hasStarred);
+        setHasStarred(true);
       });
     } else {
       unStarRepo({
         variables: { repoId: id },
       }).then((res) => {
         setStarCount(res.data.removeStar.starrable.stargazers.totalCount);
-        setHasStarred(!hasStarred);
+        setHasStarred(false);
       });
     }
   };
