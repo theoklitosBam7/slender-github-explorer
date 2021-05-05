@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -9,19 +9,21 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Typography,
 } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GET_ISSUES_INFO } from './queries';
+import getComparator from './utilities/getComparator';
+import stableSort from './utilities/stableSort';
+import EnhancedTableHead from './EnhancedTableHead';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: '1rem',
+    width: '100%',
   },
   table: {
-    minWidth: 650,
+    minWidth: 750,
   },
   spinnerContainer: {
     display: 'flex',
@@ -32,7 +34,36 @@ const useStyles = makeStyles({
     marginTop: '1rem',
     marginLeft: '1rem',
   },
-});
+  note: {
+    marginTop: '1rem',
+    textAlign: 'center',
+  },
+  paper: {
+    width: '100%',
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  visuallyHidden: {
+    border: 0,
+    clip: 'rect(0 0 0 0)',
+    height: 1,
+    margin: -1,
+    overflow: 'hidden',
+    padding: 0,
+    position: 'absolute',
+    top: 20,
+    width: 1,
+  },
+}));
+
+const headCells = [
+  { id: 'number', numeric: false, label: 'No' },
+  { id: 'title', numeric: false, label: 'Title' },
+  { id: 'author.login', numeric: false, label: 'Author' },
+  { id: 'comments.totalCount', numeric: true, label: 'Comments' },
+  { id: 'createdAt', numeric: false, label: 'Created At' },
+  { id: 'state', numeric: false, label: 'State' },
+];
 
 const Issues = ({ repoName, states }) => {
   const classes = useStyles();
@@ -48,6 +79,14 @@ const Issues = ({ repoName, states }) => {
       states,
     },
   });
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('comments.totalCount');
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
   if (loading) {
     return (
@@ -95,37 +134,42 @@ const Issues = ({ repoName, states }) => {
         variant="outlined"
         color={'primary'}
       />
-      <TableContainer component={Paper} className={classes.root}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">No</TableCell>
-              <TableCell align="center">Title</TableCell>
-              <TableCell align="center">Author</TableCell>
-              <TableCell align="center">Comments</TableCell>
-              <TableCell align="center">Created At</TableCell>
-              <TableCell align="center">State</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.repository.issues.edges.map(({ node }) => (
-              <TableRow key={node.id}>
-                <TableCell align="center"> #{node.number}</TableCell>
-                <TableCell align="center">{node.title}</TableCell>
-                <TableCell align="center">{node.author.login}</TableCell>
-                <TableCell align="center">{node.comments.totalCount}</TableCell>
-                <TableCell align="center">
-                  {node.createdAt.split('T')[0]}
-                </TableCell>
-                <TableCell align="center">{node.state}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <EnhancedTableHead
+                classes={classes}
+                headCells={headCells}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+              />
+              <TableBody>
+                {stableSort(
+                  data.repository.issues.edges,
+                  getComparator(order, orderBy)
+                ).map((row) => (
+                  <TableRow key={row.id} hover>
+                    <TableCell align="left"> #{row.number}</TableCell>
+                    <TableCell align="left">{row.title}</TableCell>
+                    <TableCell align="left">{row.author.login}</TableCell>
+                    <TableCell align="right">
+                      {row.comments.totalCount}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.createdAt.split('T')[0]}
+                    </TableCell>
+                    <TableCell align="left">{row.state}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </div>
 
       <Button
-        className={classes.root}
         variant="contained"
         color="primary"
         disabled={!hasNextPage}
